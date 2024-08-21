@@ -1,5 +1,5 @@
 // Example data fetching and rendering logic
-fetch('https://your-backend-url/getData')
+fetch('https://our-2521-backend.herokuapp.com/getData')
     .then(response => response.json())
     .then(data => {
         // Assuming `data` is an array of arrays where each inner array represents a row from your Google Sheet
