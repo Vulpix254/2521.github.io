@@ -17,15 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Sort the filtered data by rating (descending)
-            const sortedData = filteredData.sort((a, b) => parseFloat(b[8].replace('%', '')) - parseFloat(a[8].replace('%', '')));
+            // Sort the filtered data by rating (ascending)
+            const sortedData = filteredData.sort((a, b) => parseFloat(a[8].replace('%', '')) - parseFloat(b[8].replace('%', '')));
 
-            // Get Top 10 Movies
-            const top10Movies = sortedData.slice(0, 10);
+            // Get Top 10 Movies (highest ratings first)
+            const top10Movies = sortedData.slice(-10).reverse();
             console.log("Top 10 Movies for Chart:", top10Movies);
 
-            // Get Worst 10 Movies
-            const worst10Movies = sortedData.slice(-10).reverse();
+            // Get Worst 10 Movies (lowest ratings first)
+            const worst10Movies = sortedData.slice(0, 10);
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
             // Plotting Charts
@@ -69,7 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 options: {
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            max: 100 // Y-axis set to 100
                         }
                     }
                 }
@@ -82,7 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 options: {
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            max: 100 // Y-axis set to 100
                         }
                     }
                 }
