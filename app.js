@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let allMoviesChartInstance = null; // To keep track of the current chart instance
+
     fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData')
         .then(response => response.json())
         .then(data => {
@@ -114,7 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const end = start + itemsPerPage;
                 const pageData = sortedData.slice(start, end);
 
-                new Chart(ctxAllMovies, {
+                // Destroy the previous chart instance if it exists
+                if (allMoviesChartInstance) {
+                    allMoviesChartInstance.destroy();
+                }
+
+                // Create a new chart instance
+                allMoviesChartInstance = new Chart(ctxAllMovies, {
                     type: 'bar',
                     data: {
                         labels: pageData.map(row => row[0]),
@@ -135,10 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
+                // Update button states
                 document.getElementById('prevPage').disabled = (page === 1);
                 document.getElementById('nextPage').disabled = (page === totalPages);
             };
 
+            // Event listeners for pagination buttons
             document.getElementById('prevPage').addEventListener('click', () => {
                 if (currentPage > 1) {
                     currentPage--;
