@@ -1,7 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData')
-        .then(response => response.json())
-        .then(data => {
+    let top10ChartInstance;
+    let worst10ChartInstance;
+    let allMoviesChartInstance;
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData');
+            const data = await response.json();
             console.log("Raw data from backend:", data);
 
             // Filter out invalid ratings (where Group Rating is NaN or 0)
@@ -84,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (top10ChartInstance) {
                 top10ChartInstance.destroy(); // Destroy existing chart if it exists
             }
-            const top10ChartInstance = createChart(
+            top10ChartInstance = createChart(
                 top10Ctx,
                 top10Movies,
                 'Top 10 Group Ratings',
@@ -99,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (worst10ChartInstance) {
                 worst10ChartInstance.destroy(); // Destroy existing chart if it exists
             }
-            const worst10ChartInstance = createChart(
+            worst10ChartInstance = createChart(
                 worst10Ctx,
                 worst10Movies,
                 'Worst 10 Group Ratings',
@@ -113,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const itemsPerPage = 10;
             const totalPages = Math.ceil(sortedData.length / itemsPerPage);
             let currentPage = 1;
-            let allMoviesChartInstance;
 
             // Function to update the 'All Movies' chart with pagination
             const updateChart = (page) => {
@@ -215,6 +219,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 listItem.textContent = `${row[0]} - ${row[8]} rating`;
                 worst10List.appendChild(listItem);
             });
-        })
-        .catch(error => console.error('Error fetching data:', error));
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    fetchData();
 });
