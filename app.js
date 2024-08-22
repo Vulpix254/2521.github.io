@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let top10ChartInstance;
-    let worst10ChartInstance;
-    let allMoviesChartInstance;
+    let top10ChartInstance = null;
+    let worst10ChartInstance = null;
+    let allMoviesChartInstance = null;
 
     const fetchData = async () => {
         try {
@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const worst10Movies = sortedData.slice(0, 10);
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
-            // Function to create chart
             const createChart = (ctx, data, label, colors) => {
                 return new Chart(ctx, {
                     type: 'bar',
