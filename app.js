@@ -80,8 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             // Render the top 10 chart
-            createChart(
-                document.getElementById('top10Chart').getContext('2d'),
+            const top10Ctx = document.getElementById('top10Chart').getContext('2d');
+            if (top10ChartInstance) {
+                top10ChartInstance.destroy(); // Destroy existing chart if it exists
+            }
+            const top10ChartInstance = createChart(
+                top10Ctx,
                 top10Movies,
                 'Top 10 Group Ratings',
                 {
@@ -91,8 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             // Render the worst 10 chart
-            createChart(
-                document.getElementById('worst10Chart').getContext('2d'),
+            const worst10Ctx = document.getElementById('worst10Chart').getContext('2d');
+            if (worst10ChartInstance) {
+                worst10ChartInstance.destroy(); // Destroy existing chart if it exists
+            }
+            const worst10ChartInstance = createChart(
+                worst10Ctx,
                 worst10Movies,
                 'Worst 10 Group Ratings',
                 {
