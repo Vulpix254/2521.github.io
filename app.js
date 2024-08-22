@@ -42,6 +42,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const worst10Movies = sortedData.slice(-10);
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
+            // Chart options
+            const commonChartOptions = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%'; // Add percentage sign to Y-axis labels
+                            }
+                        }
+                    }
+                }
+            };
+
             // Plotting Charts for Top 10 and Worst 10
             const ctxTop10 = document.getElementById('top10Chart').getContext('2d');
             const ctxWorst10 = document.getElementById('worst10Chart').getContext('2d');
@@ -58,13 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         borderWidth: 1
                     }]
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
+                options: commonChartOptions
             });
 
             new Chart(ctxWorst10, {
@@ -79,13 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         borderWidth: 1
                     }]
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
+                options: commonChartOptions
             });
 
             // Create lists of top 10 and worst 10 movies
@@ -134,13 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             borderWidth: 1
                         }]
                     },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
+                    options: commonChartOptions
                 });
 
                 // Update button states
@@ -167,5 +176,4 @@ document.addEventListener('DOMContentLoaded', () => {
             updateChart(currentPage);
         })
         .catch(error => console.error('Error fetching data:', error));
-});
- 
+    });
