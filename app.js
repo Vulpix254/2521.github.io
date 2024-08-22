@@ -20,12 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Sort the filtered data by rating (descending)
             const sortedData = filteredData.sort((a, b) => b[8] - a[8]);
 
-            // Get Top 10 Movies
+            // Verify the sorting
+            console.log("Sorted data (highest to lowest rating):", sortedData);
+
+            // Get Top 10 Movies (highest ratings)
             const top10Movies = sortedData.slice(0, 10);
             console.log("Top 10 Movies for Chart:", top10Movies);
 
-            // Get Worst 10 Movies
-            const worst10Movies = sortedData.slice(-10);
+            // Get Worst 10 Movies (lowest ratings)
+            const worst10Movies = sortedData.slice(-10).reverse();  // Keep the reverse to ensure they are displayed correctly
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
             // Plotting Charts
@@ -44,10 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Unable to get 2D context for chart canvases.');
                 return;
             }
-
-            // Debugging data before plotting
-            console.log("Top 10 Chart Data Values:", top10Movies.map(row => parseFloat(row[8])));
-            console.log("Worst 10 Chart Data Values:", worst10Movies.map(row => parseFloat(row[8])));
 
             // Create chart data for top 10 movies
             const top10ChartData = {
