@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Top 10 Movies for Chart:", top10Movies);
 
             // Get Worst 10 Movies
-            const worst10Movies = sortedData.slice(-10).reverse();
+            const worst10Movies = sortedData.slice(-10);
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
             // Plotting Charts
