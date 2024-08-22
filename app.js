@@ -70,10 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         onClick: function(evt, activeElements) {
                             if (activeElements.length > 0) {
                                 const index = activeElements[0].index;
-                                const imdbUrl = data[index][15]; // IMDb URL from the data
-                                if (imdbUrl) {
-                                    window.open(imdbUrl, '_blank');
-                                }
+                                const movieTitle = data[index][0]; // Movie title from the data
+                                const searchUrl = `https://www.imdb.com/find/?q=${encodeURIComponent(movieTitle)}`;
+                                window.open(searchUrl, '_blank');
                             }
                         }
                     }
@@ -160,10 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         onClick: function(evt, activeElements) {
                             if (activeElements.length > 0) {
                                 const index = activeElements[0].index;
-                                const imdbUrl = pageData[index][15]; // IMDb URL from the data
-                                if (imdbUrl) {
-                                    window.open(imdbUrl, '_blank');
-                                }
+                                const movieTitle = pageData[index][0]; // Movie title from the data
+                                const searchUrl = `https://www.imdb.com/find/?q=${encodeURIComponent(movieTitle)}`;
+                                window.open(searchUrl, '_blank');
                             }
                         }
                     }
