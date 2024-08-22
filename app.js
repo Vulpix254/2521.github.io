@@ -4,9 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             console.log("Raw data from backend:", data);
 
-            // Filter out invalid ratings (where Group Rating is NaN or 0)
+            // Filter out invalid ratings and ensure ratings are numeric
             const filteredData = data.filter(row => {
-                const rating = parseFloat(row[8]);
+                // Assuming the rating is at index 8
+                const ratingStr = row[8];
+                const rating = parseFloat(ratingStr.replace('%', '').trim());
                 return !isNaN(rating) && rating > 0;
             });
 
@@ -17,8 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Sort the filtered data by rating in descending order
-            const sortedData = filteredData.sort((a, b) => b[8] - a[8]);
+            // Convert ratings to numbers and sort data by rating in descending order
+            const sortedData = filteredData.map(row => {
+                // Convert the rating to a number
+                const ratingStr = row[8];
+                const rating = parseFloat(ratingStr.replace('%', '').trim());
+                return { ...row, rating }; // Attach the numeric rating
+            }).sort((a, b) => b.rating - a.rating);
 
             console.log("Sorted data (highest to lowest rating):", sortedData);
 
@@ -27,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Top 10 Movies for Chart:", top10Movies);
 
             // Get Worst 10 Movies (lowest ratings)
-            const worst10Movies = sortedData.slice(-10); // Get last 10 entries for worst
+            const worst10Movies = sortedData.slice(-10);
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
             // Plotting Charts
@@ -52,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: top10Movies.map(row => row[0]), // Movie titles
                 datasets: [{
                     label: 'Top 10 Group Ratings',
-                    data: top10Movies.map(row => parseFloat(row[8])), // Group Rating
+                    data: top10Movies.map(row => row.rating), // Group Rating
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
@@ -64,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: worst10Movies.map(row => row[0]), // Movie titles
                 datasets: [{
                     label: 'Worst 10 Group Ratings',
-                    data: worst10Movies.map(row => parseFloat(row[8])), // Group Rating
+                    data: worst10Movies.map(row => row.rating), // Group Rating
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 1
@@ -102,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             top10List.innerHTML = ''; // Clear existing content
             top10Movies.forEach(row => {
                 const listItem = document.createElement('li');
-                listItem.textContent = `${row[0]} - ${row[8]} rating`;
+                listItem.textContent = `${row[0]} - ${row.rating}% rating`;
                 top10List.appendChild(listItem);
             });
 
@@ -110,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             worst10List.innerHTML = ''; // Clear existing content
             worst10Movies.forEach(row => {
                 const listItem = document.createElement('li');
-                listItem.textContent = `${row[0]} - ${row[8]} rating`;
+                listItem.textContent = `${row[0]} - ${row.rating}% rating`;
                 worst10List.appendChild(listItem);
             });
         })
