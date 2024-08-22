@@ -4,8 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             console.log("Raw data from backend:", data);
 
+            // Check if the data contains headers and remove them if present
+            const hasHeaders = data[0] && data[0].length > 1 && isNaN(parseFloat(data[0][8]));
+            const startIndex = hasHeaders ? 1 : 0;
+            const actualData = hasHeaders ? data.slice(1) : data;
+
             // Filter out invalid ratings and ensure ratings are numeric
-            const filteredData = data.filter(row => {
+            const filteredData = actualData.filter(row => {
                 // Assuming the rating is at index 8
                 const ratingStr = row[8];
                 const rating = parseFloat(ratingStr.replace('%', '').trim());
