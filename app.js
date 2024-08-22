@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Sort the filtered data by rating (descending)
             const sortedData = filteredData.sort((a, b) => b[8] - a[8]);
 
-            // Verify the sorting
             console.log("Sorted data (highest to lowest rating):", sortedData);
 
             // Get Top 10 Movies (highest ratings)
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Top 10 Movies for Chart:", top10Movies);
 
             // Get Worst 10 Movies (lowest ratings)
-            const worst10Movies = sortedData.slice(-10);  // Last 10 entries for worst
+            const worst10Movies = sortedData.slice(-10); // No reverse here, slice(-10) gives the lowest ratings
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
             // Plotting Charts
@@ -100,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Optionally, create lists of top 10 and worst 10 movies
             const top10List = document.getElementById('top10List');
+            top10List.innerHTML = ''; // Clear any existing content
             top10Movies.forEach(row => {
                 const listItem = document.createElement('li');
                 listItem.textContent = `${row[0]} - ${row[8]} rating`;
@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const worst10List = document.getElementById('worst10List');
+            worst10List.innerHTML = ''; // Clear any existing content
             worst10Movies.forEach(row => {
                 const listItem = document.createElement('li');
                 listItem.textContent = `${row[0]} - ${row[8]} rating`;
