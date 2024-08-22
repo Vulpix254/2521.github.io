@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Filter out invalid ratings (where Group Rating is NaN or 0)
             const filteredData = data.filter(row => {
-                const rating = parseFloat(row[8]);
+                const rating = parseFloat(row[8].replace('%', ''));
                 return !isNaN(rating) && rating > 0;
             });
 
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Sort the filtered data by rating (descending)
-            const sortedData = filteredData.sort((a, b) => b[8] - a[8]);
+            const sortedData = filteredData.sort((a, b) => parseFloat(b[8].replace('%', '')) - parseFloat(a[8].replace('%', '')));
 
             // Get Top 10 Movies
             const top10Movies = sortedData.slice(0, 10);
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: top10Movies.map(row => row[0]), // Movie titles
                 datasets: [{
                     label: 'Top 10 Group Ratings',
-                    data: top10Movies.map(row => parseFloat(row[8])), // Group Rating
+                    data: top10Movies.map(row => parseFloat(row[8].replace('%', ''))), // Group Rating
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: worst10Movies.map(row => row[0]), // Movie titles
                 datasets: [{
                     label: 'Worst 10 Group Ratings',
-                    data: worst10Movies.map(row => parseFloat(row[8])), // Group Rating
+                    data: worst10Movies.map(row => parseFloat(row[8].replace('%', ''))), // Group Rating
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 1
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         labels: pageData.map(row => row[0]),
                         datasets: [{
                             label: 'All Movies Ratings',
-                            data: pageData.map(row => parseFloat(row[8])),
+                            data: pageData.map(row => parseFloat(row[8].replace('%', ''))),
                             backgroundColor: 'rgba(153, 102, 255, 0.2)',
                             borderColor: 'rgba(153, 102, 255, 1)',
                             borderWidth: 1
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Optionally, create lists of top 10 and worst 10 movies
+            // Create lists of top 10 and worst 10 movies
             const top10List = document.getElementById('top10List');
             top10Movies.forEach(row => {
                 const listItem = document.createElement('li');
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Sort the worst10Movies array by rating in ascending order
-            const sortedWorst10Movies = worst10Movies.slice().sort((a, b) => parseFloat(a[8]) - parseFloat(b[8]));
+            const sortedWorst10Movies = worst10Movies.slice().sort((a, b) => parseFloat(a[8].replace('%', '')) - parseFloat(b[8].replace('%', '')));
 
             const worst10List = document.getElementById('worst10List');
             sortedWorst10Movies.forEach(row => {
