@@ -3,8 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData')
         .then(response => response.json())
         .then(data => {
+            // Filter out rows where the Group Rating is not a valid number (e.g., #DIV/0!)
+            const filteredData = data.filter(row => !isNaN(row[8]) && row[8] > 0);
+
             // Sort data by the 9th column (index 8) which holds the "Group Rating"
-            const sortedData = data.sort((a, b) => b[8] - a[8]);
+            const sortedData = filteredData.sort((a, b) => b[8] - a[8]);
 
             // Top 10 Movies by Rating
             const top10Movies = sortedData.slice(0, 10);
