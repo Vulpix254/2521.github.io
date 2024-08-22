@@ -1,35 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Fetch data from the backend and process it to create multiple charts and lists
     fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData')
         .then(response => response.json())
         .then(data => {
-            console.log("Raw data from backend:", data);  // Debugging log
+            console.log("Raw data from backend:", data);
 
-            // Filter out rows where the Group Rating is not a valid number (e.g., #DIV/0! or empty)
+            // Filter out invalid ratings
             const filteredData = data.filter(row => {
                 const rating = parseFloat(row[8]);
                 return !isNaN(rating) && rating > 0;
             });
 
-            console.log("Filtered data:", filteredData);  // Debugging log
+            console.log("Filtered data:", filteredData);
 
             if (filteredData.length === 0) {
                 console.error('No valid data available to plot charts or lists.');
                 return;
             }
 
-            // Sort data by the 9th column (index 8) which holds the "Group Rating"
+            // Sort the filtered data
             const sortedData = filteredData.sort((a, b) => b[8] - a[8]);
 
-            // Top 10 Movies by Rating
+            // Get Top 10 Movies
             const top10Movies = sortedData.slice(0, 10);
-            console.log("Top 10 Movies:", top10Movies);  // Debugging log
+            console.log("Top 10 Movies for Chart:", top10Movies);
 
-            // Worst 10 Movies by Rating (from the end of the sorted list)
+            // Get Worst 10 Movies
             const worst10Movies = sortedData.slice(-10).reverse();
-            console.log("Worst 10 Movies:", worst10Movies);  // Debugging log
+            console.log("Worst 10 Movies for Chart:", worst10Movies);
 
-            // Check if canvas elements exist
+            // Plotting Charts
             const ctxTop10 = document.getElementById('top10Chart');
             const ctxWorst10 = document.getElementById('worst10Chart');
 
@@ -38,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Ensure the canvas has a 2D context
             const top10Ctx = ctxTop10.getContext('2d');
             const worst10Ctx = ctxWorst10.getContext('2d');
 
@@ -46,6 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Unable to get 2D context for chart canvases.');
                 return;
             }
+
+            // Debugging data before plotting
+            console.log("Top 10 Chart Data Values:", top10Movies.map(row => parseFloat(row[8])));
+            console.log("Worst 10 Chart Data Values:", worst10Movies.map(row => parseFloat(row[8])));
 
             // Create chart data for top 10 movies
             const top10ChartData = {
