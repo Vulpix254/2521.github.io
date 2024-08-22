@@ -1,68 +1,105 @@
-/* General container styling */
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Container for the main content */
 .container {
     width: 90%;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Center and style the chart containers */
+/* Header styling */
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+/* Chart container styling */
 .chart-container {
     margin: 20px auto;
-    width: 80%; /* Centered and not full width */
-    max-width: 800px; /* Max width to keep charts from stretching too wide */
-    background-color: #fff; /* Background color for contrast */
-    border-radius: 8px; /* Rounded corners for the container */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow to raise the container */
-    padding: 20px; /* Padding inside the container */
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Style for chart headings */
-.chart-container h2 {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-/* Style for canvas elements */
+/* Chart styling */
 canvas {
     display: block;
-    width: 100% !important; /* Ensure canvas uses full width of its container */
-    height: auto !important; /* Maintain aspect ratio */
+    max-width: 100%;
+    height: auto;
 }
 
-/* Pagination controls styling */
-#pagination-controls {
-    text-align: center;
-    margin-top: 20px;
-}
-
-#pagination-controls button {
-    font-size: 14px; /* Adjust button size */
-    padding: 8px 16px; /* Adjust padding for better fit */
-    margin: 0 5px; /* Space between buttons */
-    border-radius: 4px; /* Rounded corners */
+/* Button styling */
+button {
+    padding: 8px 16px;
+    font-size: 14px;
     border: none;
-    background-color: #007bff; /* Button color */
-    color: white;
+    border-radius: 5px;
     cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    margin: 10px;
 }
 
-#pagination-controls button:disabled {
-    background-color: #6c757d; /* Disabled button color */
+button:disabled {
+    background-color: #cccccc;
     cursor: not-allowed;
+}
+
+/* Pagination button container styling */
+.pagination-container {
+    text-align: center;
+    margin: 20px 0;
 }
 
 /* List container styling */
 .list-container {
     margin: 20px auto;
-    width: 80%;
-    max-width: 800px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.list-container ul {
+/* List styling */
+ul {
     list-style-type: none;
     padding: 0;
 }
 
-.list-container li {
-    padding: 5px 0;
+li {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+/* Ensure full width for the all movies chart */
+#allMoviesChart {
+    width: 100% !important;
+    height: 400px; /* Adjust as needed */
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+    .chart-container, .list-container {
+        width: 100%;
+    }
+
+    button {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
 }
