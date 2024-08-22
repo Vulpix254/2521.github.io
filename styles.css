@@ -1,70 +1,35 @@
-/* styles.css */
-
-/* General body styling */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
-
-/* Container for the entire content */
+/* General Container Styling */
 .container {
-    max-width: 900px;
+    width: 90%;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* Styling for the main title */
-h1 {
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 40px;
-    color: #343a40;
-}
-
-/* Styling for section titles */
-h2, h3 {
-    font-size: 1.8rem;
-    color: #495057;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-/* Chart container styling */
+/* Chart Container Styling */
 .chart-container {
-    margin-bottom: 50px;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* List container styling */
-.list-container {
     margin-bottom: 40px;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* List styling */
-ul {
-    list-style-type: none;
-    padding-left: 0;
+/* Pagination Controls Styling */
+#pagination-controls {
+    margin: 20px 0;
+    text-align: center;
 }
 
-li {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #e9ecef;
-    border-radius: 4px;
+#pagination-controls button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
-/* Highlighting the list items */
-li:nth-child(odd) {
-    background-color: #dee2e6;
+#pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Chart Styling */
+canvas {
+    max-width: 100%;
+    height: auto;
 }
