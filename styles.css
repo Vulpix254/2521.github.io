@@ -1,13 +1,13 @@
 /* Chart Container Styling */
 .chart-container {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     position: relative;
 }
 
 /* Pagination Controls Styling */
 #pagination-controls {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 10px; /* Margin above the controls */
 }
 
 #pagination-controls button {
@@ -18,6 +18,7 @@
     border-radius: 5px;
     background-color: #f0f0f0;
     transition: background-color 0.3s ease;
+    margin: 0 5px; /* Add some margin between buttons */
 }
 
 #pagination-controls button:hover {
