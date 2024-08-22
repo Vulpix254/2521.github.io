@@ -1,29 +1,45 @@
+/* General container styling */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Center and style the chart containers */
 .chart-container {
     margin: 20px auto;
-    width: 80%; /* Adjust as needed */
-    max-width: 600px; /* Adjust as needed */
+    width: 80%; /* Centered and not full width */
+    max-width: 800px; /* Max width to keep charts from stretching too wide */
+    background-color: #fff; /* Background color for contrast */
+    border-radius: 8px; /* Rounded corners for the container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow to raise the container */
+    padding: 20px; /* Padding inside the container */
 }
 
+/* Style for chart headings */
 .chart-container h2 {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
+/* Style for canvas elements */
 canvas {
-    border: 1px solid #ddd; /* Optional: Adds a border around the canvas */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow for better visual effect */
+    display: block;
+    width: 100% !important; /* Ensure canvas uses full width of its container */
+    height: auto !important; /* Maintain aspect ratio */
 }
 
+/* Pagination controls styling */
 #pagination-controls {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 #pagination-controls button {
     font-size: 14px; /* Adjust button size */
-    padding: 5px 10px; /* Adjust padding */
-    margin: 0 5px; /* Margin between buttons */
-    border-radius: 4px; /* Rounded corners for the button */
+    padding: 8px 16px; /* Adjust padding for better fit */
+    margin: 0 5px; /* Space between buttons */
+    border-radius: 4px; /* Rounded corners */
     border: none;
     background-color: #007bff; /* Button color */
     color: white;
@@ -33,4 +49,20 @@ canvas {
 #pagination-controls button:disabled {
     background-color: #6c757d; /* Disabled button color */
     cursor: not-allowed;
+}
+
+/* List container styling */
+.list-container {
+    margin: 20px auto;
+    width: 80%;
+    max-width: 800px;
+}
+
+.list-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.list-container li {
+    padding: 5px 0;
 }
