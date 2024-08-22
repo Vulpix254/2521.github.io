@@ -28,67 +28,79 @@ document.addEventListener('DOMContentLoaded', () => {
             const worst10Movies = sortedData.slice(0, 10);
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
-            // Plotting Charts
-            const ctxTop10 = document.getElementById('top10Chart').getContext('2d');
-            const ctxWorst10 = document.getElementById('worst10Chart').getContext('2d');
-            const ctxAllMovies = document.getElementById('allMoviesChart').getContext('2d');
-
-            if (!ctxTop10 || !ctxWorst10 || !ctxAllMovies) {
-                console.error('Chart canvas elements not found.');
-                return;
-            }
-
-            // Create chart data for top 10 movies
-            const top10ChartData = {
-                labels: top10Movies.map(row => row[0]), // Movie titles
-                datasets: [{
-                    label: 'Top 10 Group Ratings',
-                    data: top10Movies.map(row => parseFloat(row[8].replace('%', ''))), // Group Rating
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            };
-
-            // Create chart data for worst 10 movies
-            const worst10ChartData = {
-                labels: worst10Movies.map(row => row[0]), // Movie titles
-                datasets: [{
-                    label: 'Worst 10 Group Ratings',
-                    data: worst10Movies.map(row => parseFloat(row[8].replace('%', ''))), // Group Rating
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                }]
+            // Function to create chart
+            const createChart = (ctx, data, label, colors) => {
+                return new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(row => row[0]), // Movie titles
+                        datasets: [{
+                            label: label,
+                            data: data.map(row => parseFloat(row[8].replace('%', ''))), // Group Rating
+                            backgroundColor: colors.background,
+                            borderColor: colors.border,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100, // Set the maximum value of the Y-axis to 100
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%'; // Add percentage sign to Y-axis labels
+                                    }
+                                }
+                            }
+                        },
+                        onClick: function(evt, activeElements) {
+                            if (activeElements.length > 0) {
+                                const index = activeElements[0].index;
+                                const imdbUrl = data[index][15]; // IMDb URL from the data
+                                if (imdbUrl) {
+                                    window.open(imdbUrl, '_blank');
+                                }
+                            }
+                        }
+                    }
+                });
             };
 
             // Render the top 10 chart
-            new Chart(ctxTop10, {
-                type: 'bar',
-                data: top10ChartData,
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100 // Y-axis set to 100
-                        }
-                    }
+            createChart(
+                document.getElementById('top10Chart').getContext('2d'),
+                top10Movies,
+                'Top 10 Group Ratings',
+                {
+                    background: 'rgba(75, 192, 192, 0.2)',
+                    border: 'rgba(75, 192, 192, 1)'
                 }
-            });
+            );
 
             // Render the worst 10 chart
-            new Chart(ctxWorst10, {
-                type: 'bar',
-                data: worst10ChartData,
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100 // Y-axis set to 100
-                        }
-                    }
+            createChart(
+                document.getElementById('worst10Chart').getContext('2d'),
+                worst10Movies,
+                'Worst 10 Group Ratings',
+                {
+                    background: 'rgba(255, 99, 132, 0.2)',
+                    border: 'rgba(255, 99, 132, 1)'
                 }
-            });
+            );
 
             // Pagination variables
             const itemsPerPage = 10;
@@ -108,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Create a new chart instance
-                allMoviesChartInstance = new Chart(ctxAllMovies, {
+                allMoviesChartInstance = new Chart(document.getElementById('allMoviesChart').getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: pageData.map(row => row[0]),
@@ -142,6 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                     callback: function(value) {
                                         return value + '%'; // Add percentage sign to Y-axis labels
                                     }
+                                }
+                            }
+                        },
+                        onClick: function(evt, activeElements) {
+                            if (activeElements.length > 0) {
+                                const index = activeElements[0].index;
+                                const imdbUrl = pageData[index][15]; // IMDb URL from the data
+                                if (imdbUrl) {
+                                    window.open(imdbUrl, '_blank');
                                 }
                             }
                         }
