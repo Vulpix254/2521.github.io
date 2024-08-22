@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let allMoviesChartInstance = null; // To keep track of the current chart instance
+    let allMoviesChartInstance = null; // Variable to keep track of the current chart instance
 
     fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData')
         .then(response => response.json())
