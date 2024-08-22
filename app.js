@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Filter out invalid ratings and ensure ratings are numeric
             const filteredData = actualData.filter(row => {
-                // Assuming the rating is at index 8
                 const ratingStr = row[8];
                 const rating = parseFloat(ratingStr.replace('%', '').trim());
                 return !isNaN(rating) && rating > 0;
@@ -26,10 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Convert ratings to numbers and sort data by rating in descending order
             const sortedData = filteredData.map(row => {
-                // Convert the rating to a number
                 const ratingStr = row[8];
                 const rating = parseFloat(ratingStr.replace('%', '').trim());
-                return { ...row, rating }; // Attach the numeric rating
+                return { ...row, rating };
             }).sort((a, b) => b.rating - a.rating);
 
             console.log("Sorted data (highest to lowest rating):", sortedData);
@@ -42,51 +40,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const worst10Movies = sortedData.slice(-10);
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
-            // Plotting Charts
-            const ctxTop10 = document.getElementById('top10Chart');
-            const ctxWorst10 = document.getElementById('worst10Chart');
+            // Plotting Charts for Top 10 and Worst 10
+            const ctxTop10 = document.getElementById('top10Chart').getContext('2d');
+            const ctxWorst10 = document.getElementById('worst10Chart').getContext('2d');
 
-            if (!ctxTop10 || !ctxWorst10) {
-                console.error('Chart canvas elements not found.');
-                return;
-            }
-
-            const top10Ctx = ctxTop10.getContext('2d');
-            const worst10Ctx = ctxWorst10.getContext('2d');
-
-            if (!top10Ctx || !worst10Ctx) {
-                console.error('Unable to get 2D context for chart canvases.');
-                return;
-            }
-
-            // Create chart data for top 10 movies
-            const top10ChartData = {
-                labels: top10Movies.map(row => row[0]), // Movie titles
-                datasets: [{
-                    label: 'Top 10 Group Ratings',
-                    data: top10Movies.map(row => row.rating), // Group Rating
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            };
-
-            // Create chart data for worst 10 movies
-            const worst10ChartData = {
-                labels: worst10Movies.map(row => row[0]), // Movie titles
-                datasets: [{
-                    label: 'Worst 10 Group Ratings',
-                    data: worst10Movies.map(row => row.rating), // Group Rating
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                }]
-            };
-
-            // Render the top 10 chart
-            new Chart(top10Ctx, {
+            new Chart(ctxTop10, {
                 type: 'bar',
-                data: top10ChartData,
+                data: {
+                    labels: top10Movies.map(row => row[0]),
+                    datasets: [{
+                        label: 'Top 10 Group Ratings',
+                        data: top10Movies.map(row => row.rating),
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
                 options: {
                     scales: {
                         y: {
@@ -96,10 +65,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Render the worst 10 chart
-            new Chart(worst10Ctx, {
+            new Chart(ctxWorst10, {
                 type: 'bar',
-                data: worst10ChartData,
+                data: {
+                    labels: worst10Movies.map(row => row[0]),
+                    datasets: [{
+                        label: 'Worst 10 Group Ratings',
+                        data: worst10Movies.map(row => row.rating),
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
                 options: {
                     scales: {
                         y: {
@@ -109,9 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Clear and create lists of top 10 and worst 10 movies
+            // Create lists of top 10 and worst 10 movies
             const top10List = document.getElementById('top10List');
-            top10List.innerHTML = ''; // Clear existing content
+            top10List.innerHTML = '';
             top10Movies.forEach(row => {
                 const listItem = document.createElement('li');
                 listItem.textContent = `${row[0]} - ${row.rating}% rating`;
@@ -119,12 +96,65 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const worst10List = document.getElementById('worst10List');
-            worst10List.innerHTML = ''; // Clear existing content
+            worst10List.innerHTML = '';
             worst10Movies.forEach(row => {
                 const listItem = document.createElement('li');
                 listItem.textContent = `${row[0]} - ${row.rating}% rating`;
                 worst10List.appendChild(listItem);
             });
+
+            // Pagination setup
+            const itemsPerPage = 10;
+            let currentPage = 1;
+            const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+
+            const ctxAllMovies = document.getElementById('allMoviesChart').getContext('2d');
+            const updateChart = (page) => {
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const pageData = sortedData.slice(start, end);
+
+                new Chart(ctxAllMovies, {
+                    type: 'bar',
+                    data: {
+                        labels: pageData.map(row => row[0]),
+                        datasets: [{
+                            label: 'All Movies Ratings',
+                            data: pageData.map(row => row.rating),
+                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                document.getElementById('prevPage').disabled = (page === 1);
+                document.getElementById('nextPage').disabled = (page === totalPages);
+            };
+
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateChart(currentPage);
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateChart(currentPage);
+                }
+            });
+
+            // Initial chart update
+            updateChart(currentPage);
         })
         .catch(error => console.error('Error fetching data:', error));
 });
