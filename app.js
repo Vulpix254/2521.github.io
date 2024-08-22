@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             console.log("Raw data from backend:", data);
 
-            // Filter out invalid ratings
+            // Filter out invalid ratings (where Group Rating is NaN or 0)
             const filteredData = data.filter(row => {
                 const rating = parseFloat(row[8]);
                 return !isNaN(rating) && rating > 0;
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Sort the filtered data
+            // Sort the filtered data by rating (descending)
             const sortedData = filteredData.sort((a, b) => b[8] - a[8]);
 
             // Get Top 10 Movies
