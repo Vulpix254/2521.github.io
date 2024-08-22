@@ -1,31 +1,36 @@
-/* Chart Container Styling */
 .chart-container {
-    margin-bottom: 20px;
-    position: relative;
+    margin: 20px auto;
+    width: 80%; /* Adjust as needed */
+    max-width: 600px; /* Adjust as needed */
 }
 
-/* Pagination Controls Styling */
+.chart-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+canvas {
+    border: 1px solid #ddd; /* Optional: Adds a border around the canvas */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow for better visual effect */
+}
+
 #pagination-controls {
     text-align: center;
-    margin-top: 10px; /* Margin above the controls */
+    margin-top: 10px;
 }
 
 #pagination-controls button {
-    padding: 6px 12px; /* Smaller padding for smaller buttons */
-    font-size: 14px;
+    font-size: 14px; /* Adjust button size */
+    padding: 5px 10px; /* Adjust padding */
+    margin: 0 5px; /* Margin between buttons */
+    border-radius: 4px; /* Rounded corners for the button */
+    border: none;
+    background-color: #007bff; /* Button color */
+    color: white;
     cursor: pointer;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f0f0f0;
-    transition: background-color 0.3s ease;
-    margin: 0 5px; /* Add some margin between buttons */
-}
-
-#pagination-controls button:hover {
-    background-color: #e0e0e0;
 }
 
 #pagination-controls button:disabled {
-    background-color: #ccc;
+    background-color: #6c757d; /* Disabled button color */
     cursor: not-allowed;
 }
