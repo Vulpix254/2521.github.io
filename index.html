@@ -12,27 +12,33 @@
         <h1>Movie Ratings</h1>
 
         <div class="chart-container">
-            <!-- Top 10 Movies Chart -->
             <h2>Top 10 Movies</h2>
             <canvas id="top10Chart" width="400" height="200"></canvas>
         </div>
 
         <div class="chart-container">
-            <!-- Worst 10 Movies Chart -->
             <h2>Worst 10 Movies</h2>
             <canvas id="worst10Chart" width="400" height="200"></canvas>
         </div>
 
         <div class="list-container">
-            <!-- Top 10 Movies List -->
             <h3>Top 10 Movies List</h3>
             <ul id="top10List"></ul>
         </div>
 
         <div class="list-container">
-            <!-- Worst 10 Movies List -->
             <h3>Worst 10 Movies List</h3>
             <ul id="worst10List"></ul>
+        </div>
+
+        <!-- Pagination and Full List Chart -->
+        <div class="chart-container">
+            <h2>All Movies</h2>
+            <div id="pagination-controls">
+                <button id="prevPage" disabled>Previous</button>
+                <button id="nextPage">Next</button>
+            </div>
+            <canvas id="allMoviesChart" width="800" height="400"></canvas>
         </div>
     </div>
 
