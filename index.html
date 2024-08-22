@@ -5,23 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Ratings</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Movie Ratings</h1>
+    <div class="container">
+        <h1>Movie Ratings</h1>
 
-    <!-- Top 10 Movies Chart -->
-    <canvas id="top10Chart" width="400" height="200"></canvas>
+        <div class="chart-container">
+            <!-- Top 10 Movies Chart -->
+            <h2>Top 10 Movies</h2>
+            <canvas id="top10Chart" width="400" height="200"></canvas>
+        </div>
 
-    <!-- Worst 10 Movies Chart -->
-    <canvas id="worst10Chart" width="400" height="200"></canvas>
+        <div class="chart-container">
+            <!-- Worst 10 Movies Chart -->
+            <h2>Worst 10 Movies</h2>
+            <canvas id="worst10Chart" width="400" height="200"></canvas>
+        </div>
 
-    <!-- Top 10 Movies List -->
-    <h3>Top 10 Movies</h3>
-    <ul id="top10List"></ul>
+        <div class="list-container">
+            <!-- Top 10 Movies List -->
+            <h3>Top 10 Movies List</h3>
+            <ul id="top10List"></ul>
+        </div>
 
-    <!-- Worst 10 Movies List -->
-    <h3>Worst 10 Movies</h3>
-    <ul id="worst10List"></ul>
+        <div class="list-container">
+            <!-- Worst 10 Movies List -->
+            <h3>Worst 10 Movies List</h3>
+            <ul id="worst10List"></ul>
+        </div>
+    </div>
 
     <!-- Include the app.js script after the content -->
     <script src="app.js"></script>
