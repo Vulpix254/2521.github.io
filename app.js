@@ -47,7 +47,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const worst10Movies = sortedData.slice(-10).reverse();
             console.log("Worst 10 Movies for Chart:", worst10Movies);
 
-            // Plotting Charts
+            // Pagination
+            const moviesPerPage = 10;
+            let currentPage = 1;
+            const totalPages = Math.ceil(sortedData.length / moviesPerPage);
+
+            const updateAllMoviesChart = () => {
+                const startIndex = (currentPage - 1) * moviesPerPage;
+                const endIndex = Math.min(startIndex + moviesPerPage, sortedData.length);
+                const currentMovies = sortedData.slice(startIndex, endIndex);
+
+                const allMoviesChartData = {
+                    labels: currentMovies.map(row => row[0]), // Movie titles
+                    datasets: [{
+                        label: 'All Movies Group Ratings',
+                        data: currentMovies.map(row => parseFloat(row[8])), // Group Rating
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    }]
+                };
+
+                allMoviesChart.data = allMoviesChartData;
+                allMoviesChart.update();
+            };
+
+            // Chart Instances
             const ctxTop10 = document.getElementById('top10Chart');
             const ctxWorst10 = document.getElementById('worst10Chart');
             const ctxAllMovies = document.getElementById('allMoviesChart');
@@ -92,10 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Create chart data for all movies
             const allMoviesChartData = {
-                labels: sortedData.map(row => row[0]), // Movie titles
+                labels: [], // Will be updated on pagination
                 datasets: [{
                     label: 'All Movies Group Ratings',
-                    data: sortedData.map(row => parseFloat(row[8])), // Group Rating
+                    data: [], // Will be updated on pagination
                     backgroundColor: 'rgba(153, 102, 255, 0.2)',
                     borderColor: 'rgba(153, 102, 255, 1)',
                     borderWidth: 1
@@ -128,8 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Render the all movies chart
-            new Chart(allMoviesCtx, {
+            // Initialize the all movies chart
+            const allMoviesChart = new Chart(allMoviesCtx, {
                 type: 'bar',
                 data: allMoviesChartData,
                 options: {
@@ -140,6 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
+
+            // Update all movies chart with the current page
+            updateAllMoviesChart();
 
             // Create lists of top 10 and worst 10 movies
             const top10List = document.getElementById('top10List');
@@ -185,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             };
 
+            // Initialize the top 10 and worst 10 charts with click events
             addChartClickEvent(new Chart(top10Ctx, {
                 type: 'bar',
                 data: top10ChartData,
@@ -209,17 +238,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }), worst10Movies);
 
-            addChartClickEvent(new Chart(allMoviesCtx, {
-                type: 'bar',
-                data: allMoviesChartData,
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
+            addChartClickEvent(allMoviesChart, sortedData);
+
+            // Pagination Controls
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateAllMoviesChart();
+                    updatePaginationButtons();
                 }
-            }), sortedData);
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateAllMoviesChart();
+                    updatePaginationButtons();
+                }
+            });
+
+            const updatePaginationButtons = () => {
+                document.getElementById('prevPage').disabled = (currentPage === 1);
+                document.getElementById('nextPage').disabled = (currentPage === totalPages);
+            };
+
+            updatePaginationButtons();
         })
         .catch(error => console.error('Error fetching data:', error));
 });
