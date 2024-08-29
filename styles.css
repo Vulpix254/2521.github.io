@@ -92,6 +92,22 @@ li:last-child {
     height: 400px; /* Adjust as needed */
 }
 
+#nowShowing {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#posterImage {
+    margin-right: 20px;
+    border-radius: 10px;
+}
+
+#nowShowingTitle {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
 /* Responsive design adjustments */
 @media (max-width: 768px) {
     .chart-container, .list-container {
