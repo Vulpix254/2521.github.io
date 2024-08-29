@@ -2,17 +2,21 @@
 fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData')
     .then(response => response.json())
     .then(data => {
-        if (!data || data.length === 0) {
-            throw new Error('No data found');
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            throw new Error('No valid data found');
         }
 
-        // Extract relevant columns
+        // Extract relevant columns assuming your Google Sheets data starts from the first row
         const movies = data.map(row => ({
-            title: row[0],
-            groupRating: parseFloat(row[8]) || 0, // Ensure it's a number
-            posterUrl: row[17] || null, // Assume the poster URL is in column R
-            lastUpdated: row[18] || null, // Assume the last updated date is in column S
-        })).filter(movie => !isNaN(movie.groupRating)); // Filter out rows with invalid ratings
+            title: row[0], // Title in the first column
+            groupRating: parseFloat(row[8]) || 0, // Group rating in the 9th column
+            posterUrl: row[17] || null, // Poster URL in the 18th column
+            lastUpdated: row[18] || null // Last updated date in the 19th column
+        })).filter(movie => movie.title && !isNaN(movie.groupRating)); // Filter out rows without a title or with an invalid rating
+
+        if (movies.length === 0) {
+            throw new Error('No valid movies found after filtering');
+        }
 
         // Sort movies by group rating
         const sortedMovies = [...movies].sort((a, b) => b.groupRating - a.groupRating);
@@ -84,6 +88,8 @@ fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData')
                 <h3>Now Showing: ${lastMovie.title}</h3>
                 <img src="${lastMovie.posterUrl}" alt="${lastMovie.title} poster" style="max-width: 200px;">
             `;
+        } else {
+            document.getElementById('nowShowing').textContent = 'No movie available for Now Showing.';
         }
     })
     .catch(error => console.error('Error fetching data:', error));
