@@ -2,17 +2,26 @@
 fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData')
     .then(response => response.json())
     .then(data => {
+        // Log the fetched data for debugging
+        console.log('Fetched Data:', data);
+
         if (!data || !Array.isArray(data) || data.length === 0) {
             throw new Error('No valid data found');
         }
 
-        // Extract relevant columns assuming your Google Sheets data starts from the first row
-        const movies = data.map(row => ({
-            title: row[0], // Title in the first column
-            groupRating: parseFloat(row[8]) || 0, // Group rating in the 9th column
-            posterUrl: row[17] || null, // Poster URL in the 18th column
-            lastUpdated: row[18] || null // Last updated date in the 19th column
-        })).filter(movie => movie.title && !isNaN(movie.groupRating)); // Filter out rows without a title or with an invalid rating
+        // Process and validate each row
+        const movies = data.map(row => {
+            // Check if the row is an array and has enough columns
+            if (Array.isArray(row) && row.length > 18) {
+                return {
+                    title: row[0] || 'Unknown Title',
+                    groupRating: parseFloat(row[8]) || 0,
+                    posterUrl: row[17] || null,
+                    lastUpdated: row[18] || null
+                };
+            }
+            return null; // Return null if the row is invalid
+        }).filter(movie => movie && movie.title && !isNaN(movie.groupRating)); // Filter out invalid movies
 
         if (movies.length === 0) {
             throw new Error('No valid movies found after filtering');
