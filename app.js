@@ -1,7 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const fetchMoviePoster = async (movieTitle) => {
+        const apiKey = process.env.OMDB_API_KEY; // Ensure your OMDB API key is available in your environment variables
+        const url = `https://www.omdbapi.com/?t=${encodeURIComponent(movieTitle)}&apikey=${apiKey}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.Response === 'True') {
+                return data.Poster;
+            } else {
+                console.error('Error fetching movie poster:', data.Error);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error fetching movie poster:', error);
+            return null;
+        }
+    };
+
     fetch('https://our-2521-backend-dcf9451b4f85.herokuapp.com/getData')
         .then(response => response.json())
-        .then(data => {
+        .then(async data => {
             console.log("Raw data from backend:", data);
 
             // Filter out invalid ratings (where Group Rating is NaN or 0)
@@ -31,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Plotting Charts
             const ctxTop10 = document.getElementById('top10Chart');
             const ctxWorst10 = document.getElementById('worst10Chart');
-            const ctxAllMovies = document.getElementById('allMoviesChart'); // Add this line
+            const ctxAllMovies = document.getElementById('allMoviesChart');
 
             if (!ctxTop10 || !ctxWorst10 || !ctxAllMovies) {
                 console.error('Chart canvas elements not found.');
@@ -40,17 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const top10Ctx = ctxTop10.getContext('2d');
             const worst10Ctx = ctxWorst10.getContext('2d');
-            const allMoviesCtx = ctxAllMovies.getContext('2d'); // Add this line
+            const allMoviesCtx = ctxAllMovies.getContext('2d');
 
             if (!top10Ctx || !worst10Ctx || !allMoviesCtx) {
                 console.error('Unable to get 2D context for chart canvases.');
                 return;
             }
-
-            // Debugging data before plotting
-            console.log("Top 10 Chart Data Values:", top10Movies.map(row => parseFloat(row[8])));
-            console.log("Worst 10 Chart Data Values:", worst10Movies.map(row => parseFloat(row[8])));
-            console.log("All Movies Chart Data Values:", sortedData.map(row => parseFloat(row[8]))); // Add this line
 
             // Create chart data for top 10 movies
             const top10ChartData = {
@@ -127,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Optionally, create lists of top 10 and worst 10 movies
+            // Create lists of top 10 and worst 10 movies
             const top10List = document.getElementById('top10List');
             top10List.innerHTML = ''; // Clear existing content
             top10Movies.forEach(row => {
@@ -144,21 +158,68 @@ document.addEventListener('DOMContentLoaded', () => {
                 worst10List.appendChild(listItem);
             });
 
-            // "Now Showing" Section - Display last movie added with values
-            const nowShowingElement = document.getElementById('nowShowing');
-            if (nowShowingElement) {
-                const lastMovie = sortedData[sortedData.length - 1];
-                if (lastMovie && lastMovie[17]) { // Assuming poster URL is at index 17
-                    nowShowingElement.innerHTML = `
-                        <h3>Now Showing: ${lastMovie[0]}</h3>
-                        <img src="${lastMovie[17]}" alt="${lastMovie[0]} poster" style="max-width: 200px;">
-                    `;
-                } else {
-                    nowShowingElement.textContent = 'No movie available for Now Showing.';
-                }
+            // Fetch and render "Now Showing" movie poster
+            const lastUpdatedMovie = sortedData[0]; // Assuming the first one is the most recently updated
+            const posterUrl = await fetchMoviePoster(lastUpdatedMovie[0]);
+
+            const nowShowing = document.getElementById('nowShowing');
+            if (posterUrl) {
+                nowShowing.innerHTML = `
+                    <h3>Now Showing: ${lastUpdatedMovie[0]}</h3>
+                    <img src="${posterUrl}" alt="${lastUpdatedMovie[0]} poster" style="max-width: 200px;">
+                `;
             } else {
-                console.error('Now Showing element not found');
+                nowShowing.innerHTML = 'No movie available for Now Showing.';
             }
+
+            // Add event listeners to open a new tab with a search for the movie title when a bar is clicked
+            const addChartClickEvent = (chart, movies) => {
+                chart.canvas.addEventListener('click', (event) => {
+                    const activePoint = chart.getElementAtEvent(event)[0];
+                    if (activePoint) {
+                        const movieIndex = activePoint.index;
+                        const movieTitle = movies[movieIndex][0];
+                        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(movieTitle)}`;
+                        window.open(searchUrl, '_blank');
+                    }
+                });
+            };
+
+            addChartClickEvent(new Chart(top10Ctx, {
+                type: 'bar',
+                data: top10ChartData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            }), top10Movies);
+
+            addChartClickEvent(new Chart(worst10Ctx, {
+                type: 'bar',
+                data: worst10ChartData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            }), worst10Movies);
+
+            addChartClickEvent(new Chart(allMoviesCtx, {
+                type: 'bar',
+                data: allMoviesChartData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            }), sortedData);
         })
         .catch(error => console.error('Error fetching data:', error));
 });
