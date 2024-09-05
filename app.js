@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const fetchMoviePoster = async (movieTitle) => {
-        const apiKey = process.env.OMDB_API_KEY; // Ensure your OMDB API key is available in your environment variables
+        const response = await fetch('/getOMDBApiKey');
+        const { apiKey } = await response.json(); // Fetch OMDB API key from backend
         const url = `https://www.omdbapi.com/?t=${encodeURIComponent(movieTitle)}&apikey=${apiKey}`;
 
         try {
@@ -29,8 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return !isNaN(rating) && rating > 0;
             });
 
-            console.log("Filtered data:", filteredData);
-
             if (filteredData.length === 0) {
                 console.error('No valid data available to plot charts or lists.');
                 return;
@@ -57,39 +56,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const endIndex = Math.min(startIndex + moviesPerPage, sortedData.length);
                 const currentMovies = sortedData.slice(startIndex, endIndex);
 
-                const allMoviesChartData = {
-                    labels: currentMovies.map(row => row[0]), // Movie titles
-                    datasets: [{
-                        label: 'All Movies Group Ratings',
-                        data: currentMovies.map(row => parseFloat(row[8])), // Group Rating
-                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1
-                    }]
-                };
-
-                allMoviesChart.data = allMoviesChartData;
-                allMoviesChart.update();
+                // Update chart labels and data for current movies
+                allMoviesChart.data.labels = currentMovies.map(row => row[0]); // Movie titles
+                allMoviesChart.data.datasets[0].data = currentMovies.map(row => parseFloat(row[8])); // Group Rating
+                allMoviesChart.update(); // Re-render the chart with updated data
             };
 
             // Chart Instances
-            const ctxTop10 = document.getElementById('top10Chart');
-            const ctxWorst10 = document.getElementById('worst10Chart');
-            const ctxAllMovies = document.getElementById('allMoviesChart');
-
-            if (!ctxTop10 || !ctxWorst10 || !ctxAllMovies) {
-                console.error('Chart canvas elements not found.');
-                return;
-            }
-
-            const top10Ctx = ctxTop10.getContext('2d');
-            const worst10Ctx = ctxWorst10.getContext('2d');
-            const allMoviesCtx = ctxAllMovies.getContext('2d');
-
-            if (!top10Ctx || !worst10Ctx || !allMoviesCtx) {
-                console.error('Unable to get 2D context for chart canvases.');
-                return;
-            }
+            const ctxTop10 = document.getElementById('top10Chart').getContext('2d');
+            const ctxWorst10 = document.getElementById('worst10Chart').getContext('2d');
+            const ctxAllMovies = document.getElementById('allMoviesChart').getContext('2d');
 
             // Create chart data for top 10 movies
             const top10ChartData = {
@@ -128,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             // Render the top 10 chart
-            new Chart(top10Ctx, {
+            new Chart(ctxTop10, {
                 type: 'bar',
                 data: top10ChartData,
                 options: {
@@ -141,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Render the worst 10 chart
-            new Chart(worst10Ctx, {
+            new Chart(ctxWorst10, {
                 type: 'bar',
                 data: worst10ChartData,
                 options: {
@@ -154,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Initialize the all movies chart
-            const allMoviesChart = new Chart(allMoviesCtx, {
+            const allMoviesChart = new Chart(ctxAllMovies, {
                 type: 'bar',
                 data: allMoviesChartData,
                 options: {
@@ -187,61 +163,45 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Fetch and render "Now Showing" movie poster
-            const lastUpdatedMovie = sortedData[0]; // Assuming the first one is the most recently updated
-            const posterUrl = await fetchMoviePoster(lastUpdatedMovie[0]);
-
-            const nowShowing = document.getElementById('nowShowing');
-            if (posterUrl) {
-                nowShowing.innerHTML = `
-                    <h3>Now Showing: ${lastUpdatedMovie[0]}</h3>
-                    <img src="${posterUrl}" alt="${lastUpdatedMovie[0]} poster" style="max-width: 200px;">
-                `;
-            } else {
-                nowShowing.innerHTML = 'No movie available for Now Showing.';
+            const lastUpdatedMovie = sortedData.find(movie => parseFloat(movie[8]) > 0); // Find the last movie with a valid rating
+            if (lastUpdatedMovie) {
+                const posterUrl = await fetchMoviePoster(lastUpdatedMovie[0]);
+                const nowShowing = document.getElementById('nowShowing');
+                if (posterUrl) {
+                    nowShowing.innerHTML = `
+                        <h3>Now Showing: ${lastUpdatedMovie[0]}</h3>
+                        <img src="${posterUrl}" alt="${lastUpdatedMovie[0]} poster" style="max-width: 200px;">
+                    `;
+                } else {
+                    nowShowing.innerHTML = 'No movie available for Now Showing.';
+                }
             }
 
             // Add event listeners to open a new tab with a search for the movie title when a bar is clicked
             const addChartClickEvent = (chart, movies) => {
                 chart.canvas.addEventListener('click', (event) => {
-                    const activePoint = chart.getElementAtEvent(event)[0];
-                    if (activePoint) {
-                        const movieIndex = activePoint.index;
+                    const activePoint = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
+                    if (activePoint.length > 0) {
+                        const movieIndex = activePoint[0].index;
                         const movieTitle = movies[movieIndex][0];
-                        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(movieTitle)}`;
+                        const searchUrl = `https://www.imdb.com/find?q=${encodeURIComponent(movieTitle)}`;
                         window.open(searchUrl, '_blank');
                     }
                 });
             };
 
-            // Initialize the top 10 and worst 10 charts with click events
-            addChartClickEvent(new Chart(top10Ctx, {
-                type: 'bar',
-                data: top10ChartData,
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            }), top10Movies);
+            addChartClickEvent(allMoviesChart, sortedData);  // For the paginated "All Movies" chart
 
-            addChartClickEvent(new Chart(worst10Ctx, {
-                type: 'bar',
-                data: worst10ChartData,
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            }), worst10Movies);
+            // Handle pagination
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
 
-            addChartClickEvent(allMoviesChart, sortedData);
+            const updatePaginationButtons = () => {
+                prevButton.disabled = currentPage === 1;
+                nextButton.disabled = currentPage === totalPages;
+            };
 
-            // Pagination Controls
-            document.getElementById('prevPage').addEventListener('click', () => {
+            prevButton.addEventListener('click', () => {
                 if (currentPage > 1) {
                     currentPage--;
                     updateAllMoviesChart();
@@ -249,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            document.getElementById('nextPage').addEventListener('click', () => {
+            nextButton.addEventListener('click', () => {
                 if (currentPage < totalPages) {
                     currentPage++;
                     updateAllMoviesChart();
@@ -257,12 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            const updatePaginationButtons = () => {
-                document.getElementById('prevPage').disabled = (currentPage === 1);
-                document.getElementById('nextPage').disabled = (currentPage === totalPages);
-            };
+            updatePaginationButtons(); // Initialize pagination buttons
 
-            updatePaginationButtons();
         })
-        .catch(error => console.error('Error fetching data:', error));
+        .catch(error => console.error('Error fetching movie data:', error));
 });
